@@ -1,191 +1,126 @@
 # QR Contact Generator
 
-A modern web application that converts contact information into scannable QR codes with advanced styling options.
+![Screenshot](screenshot.png)
 
-## Features
+---
 
-✨ **Core Functionality**
-- Generate QR codes from contact information (vCard format)
-- Scannable by standard contacts apps (iOS, Android, Google Contacts)
-- Support for name, email, phone, organization, website, and address
+## Deutsch
 
-🎨 **Styling & Effects**
-- **Color Transitions**: Customize dark and light colors
-- **Shadow Effects**: Add depth with shadow rendering
-- **Error Correction**: Choose redundancy level (Low/Medium/High)
-- **Icon Support**: Embed icons in QR codes
-- **Real-time Preview**: See changes instantly
+Ein QR-Code-Generator fuer Visitenkarten, der komplett im Browser laeuft — **ohne Installation, ohne Server, ohne dass Daten uebertragen werden**.
 
-💾 **Export**
-- Download QR codes as PNG images
-- High-quality output suitable for printing and digital sharing
+### Datenschutz
 
-## Tech Stack
+Alle Kontaktdaten werden **ausschliesslich lokal im Browser** verarbeitet. Es werden **keine Daten an einen externen Server gesendet**. Die einzige Netzwerkverbindung ist der einmalige Download der QR-Code-Bibliothek (qrcode-generator) beim Laden der Seite via CDN. Die eigentliche Verarbeitung — QR-Erzeugung, Styling, Visitenkarten-Rendering — geschieht vollstaendig auf dem eigenen Geraet.
 
-**Backend**
-- Flask web framework
-- qrcode library for QR generation
-- Pillow (PIL) for image manipulation
-- Gunicorn for production deployment
+### Nutzung
 
-**Frontend**
-- Modern HTML5
-- Pure vanilla JavaScript (no frameworks)
-- Custom CSS with gradient effects
-- Responsive design (mobile-friendly)
+1. `index.html` im Browser oeffnen (Doppelklick genuegt)
+2. Kontaktdaten eingeben
+3. QR-Code wird automatisch als Visitenkarte generiert
+4. Mit "Download PNG" als Bilddatei speichern
 
-## Setup & Installation
+Keine Installation, kein Terminal, kein Server noetig.
 
-### Requirements
-- Python 3.8+
-- pip (Python package manager)
+### Funktionen
 
-### Local Development
+- **7 QR-Pattern-Stile**: Standard, Rund, Diamant, Punkte, Stern, Smooth, Linien
+- **Farbverlauf**: Diagonaler Farbgradient auf den QR-Modulen
+- **Schatten**: Leichter Drop-Shadow unter dem QR-Code
+- **Logo-Upload**: Eigenes Logo/Bild im QR-Zentrum platzieren (Drag & Drop)
+- **Fehlerkorrektur**: 4 Stufen (L/M/Q/H) fuer unterschiedliche Scan-Zuverlaessigkeit
+- **Visitenkarten-Layout**: QR-Code links, Kontaktdaten rechts
+- **vCard 3.0**: Kompatibel mit iOS, Android, Google Contacts, Outlook
+- **PNG-Export**: Hochaufloesend, druckfertig
 
-1. **Clone or navigate to the project directory**
-```bash
-cd QrGenerarator
-```
+### Dateistruktur
 
-2. **Create a virtual environment**
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Run the development server**
-```bash
-python3 app.py
-```
-
-5. **Open in browser**
-Navigate to `http://localhost:8000`
-
-## Production Deployment
-
-### Using Gunicorn (Unicorn alternative for Flask)
-```bash
-gunicorn wsgi:app --workers 4 --bind 0.0.0.0:8000
-```
-
-### Using Heroku
-```bash
-heroku create your-app-name
-git push heroku main
-```
-
-### Using Docker
-Create a `Dockerfile`:
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["gunicorn", "wsgi:app", "--bind", "0.0.0.0:8000"]
-```
-
-Then:
-```bash
-docker build -t qr-generator .
-docker run -p 8000:8000 qr-generator
-```
-
-## API Endpoints
-
-### POST `/api/generate`
-Generates a QR code and returns it as base64 PNG.
-
-**Request body:**
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "+1-555-0123",
-  "organization": "ACME Corp",
-  "url": "https://example.com",
-  "address": "123 Main St, City, State",
-  "errorCorrection": "M",
-  "shadowEnabled": true,
-  "colorTransition": true,
-  "darkColor": "000000",
-  "lightColor": "FFFFFF"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "image": "data:image/png;base64,...",
-  "vcard": "BEGIN:VCARD\nVERSION:3.0\n..."
-}
-```
-
-### POST `/api/download`
-Downloads the QR code as a PNG file.
-
-## Usage
-
-1. **Fill Contact Info**: Enter the contact details you want to encode
-2. **Customize Style**:
-   - Toggle color transitions and adjust colors
-   - Enable shadow effect for depth
-   - Choose error correction level
-3. **Generate**: Click "Generate QR Code" to create the QR
-4. **Preview**: See the result in real-time
-5. **Download**: Save the QR code as PNG
-
-## QR Code Error Correction Levels
-
-- **L (7%)**: Low redundancy, smallest size
-- **M (15%)**: Medium redundancy, balanced (default)
-- **Q (25%)**: Quartile redundancy, higher recovery
-- **H (30%)**: High redundancy, maximum recovery but larger code
-
-Higher error correction allows the QR code to remain scannable if partially obscured or damaged.
-
-## vCard Format
-
-QR codes are generated in vCard 3.0 format, compatible with:
-- iOS Contacts
-- Android Contacts
-- Google Contacts
-- Outlook
-- Most standard contact management apps
-
-## License
-
-MIT License - feel free to use and modify.
-
-## Development Notes
-
-### File Structure
 ```
 QrGenerarator/
-├── app.py              # Flask application and API endpoints
-├── wsgi.py             # WSGI entry point for production
-├── requirements.txt    # Python dependencies
-├── Procfile            # Deployment configuration
-├── templates/
-│   └── index.html      # Main frontend
-└── static/
-    ├── style.css       # Styling
-    └── script.js       # Frontend logic
+├── index.html      # Gesamte App (HTML + CSS + JS)
+├── screenshot.png   # Screenshot
+└── README.md        # Diese Datei
 ```
 
-### Adding New Features
-- **Colors**: Modify `apply_color_transition()` in app.py
-- **Effects**: Add new functions in app.py and call from `/api/generate`
-- **UI**: Edit templates/index.html and static/style.css
-- **Logic**: Update static/script.js for frontend behavior
+---
 
-### Testing the QR Code
-1. Generate a code with your contact info
-2. Scan with iPhone Notes app or Google Lens
-3. Verify contact details are correctly parsed
+## English
+
+A QR code generator for business cards that runs entirely in the browser — **no installation, no server, no data transmission**.
+
+### Privacy
+
+All contact data is processed **exclusively in your local browser**. **No data is sent to any external server.** The only network connection is a one-time download of the QR code library (qrcode-generator) via CDN when the page loads. The actual processing — QR generation, styling, business card rendering — happens entirely on your own device.
+
+### Usage
+
+1. Open `index.html` in your browser (double-click is enough)
+2. Enter contact details
+3. The QR code is automatically generated as a business card
+4. Save as image file with "Download PNG"
+
+No installation, no terminal, no server required.
+
+### Features
+
+- **7 QR pattern styles**: Standard, Rounded, Diamond, Dots, Star, Smooth, Lines
+- **Color gradient**: Diagonal color gradient on QR modules
+- **Shadow**: Light drop shadow under the QR code
+- **Logo upload**: Place your own logo/image in the QR center (drag & drop)
+- **Error correction**: 4 levels (L/M/Q/H) for varying scan reliability
+- **Business card layout**: QR code on the left, contact details on the right
+- **vCard 3.0**: Compatible with iOS, Android, Google Contacts, Outlook
+- **PNG export**: High resolution, print-ready
+
+### File Structure
+
+```
+QrGenerarator/
+├── index.html      # Complete app (HTML + CSS + JS)
+├── screenshot.png   # Screenshot
+└── README.md        # This file
+```
+
+---
+
+## Italiano
+
+Un generatore di codici QR per biglietti da visita che funziona interamente nel browser — **senza installazione, senza server, senza trasmissione di dati**.
+
+### Privacy
+
+Tutti i dati di contatto vengono elaborati **esclusivamente nel browser locale**. **Nessun dato viene inviato a un server esterno.** L'unica connessione di rete e il download una tantum della libreria QR (qrcode-generator) tramite CDN al caricamento della pagina. L'elaborazione effettiva — generazione QR, stile, rendering del biglietto da visita — avviene interamente sul proprio dispositivo.
+
+### Utilizzo
+
+1. Aprire `index.html` nel browser (basta un doppio clic)
+2. Inserire i dati di contatto
+3. Il codice QR viene generato automaticamente come biglietto da visita
+4. Salvare come file immagine con "Download PNG"
+
+Nessuna installazione, nessun terminale, nessun server necessario.
+
+### Funzionalita
+
+- **7 stili di pattern QR**: Standard, Arrotondato, Diamante, Punti, Stella, Liscio, Linee
+- **Gradiente di colore**: Gradiente diagonale sui moduli QR
+- **Ombra**: Leggera ombra esterna sotto il codice QR
+- **Caricamento logo**: Posizionare il proprio logo/immagine al centro del QR (drag & drop)
+- **Correzione errori**: 4 livelli (L/M/Q/H) per diversi gradi di affidabilita nella scansione
+- **Layout biglietto da visita**: Codice QR a sinistra, dati di contatto a destra
+- **vCard 3.0**: Compatibile con iOS, Android, Google Contacts, Outlook
+- **Esportazione PNG**: Alta risoluzione, pronto per la stampa
+
+### Struttura dei file
+
+```
+QrGenerarator/
+├── index.html      # App completa (HTML + CSS + JS)
+├── screenshot.png   # Screenshot
+└── README.md        # Questo file
+```
+
+---
+
+## License / Lizenz / Licenza
+
+MIT License

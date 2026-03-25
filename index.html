@@ -969,7 +969,7 @@ function addShadow(qrCanvas, bgColor) {
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, result.width, result.height);
     ctx.shadowColor   = 'rgba(255,200,0,0.8)';
-    ctx.shadowBlur    = 40;
+    ctx.shadowBlur    = 12;
     ctx.shadowOffsetX = 10;
     ctx.shadowOffsetY = 10;
     ctx.drawImage(qrCanvas, pad, pad);

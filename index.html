@@ -430,28 +430,6 @@ h3 {
     filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.12));
 }
 
-.loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid var(--border);
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-30px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -576,38 +554,38 @@ select {
 
                     <div class="form-group">
                         <label for="patternStyle">Pattern Style</label>
-                        <div class="pattern-grid">
-                            <label class="pattern-option selected" data-value="standard">
+                        <div class="pattern-grid" role="radiogroup" aria-label="Pattern Style">
+                            <label class="pattern-option selected" data-value="standard" role="radio" aria-checked="true" tabindex="0">
                                 <input type="radio" name="patternStyle" value="standard" checked>
                                 <span class="pattern-preview pattern-standard"></span>
                                 <span class="pattern-label">Standard</span>
                             </label>
-                            <label class="pattern-option" data-value="rounded">
+                            <label class="pattern-option" data-value="rounded" role="radio" aria-checked="false" tabindex="0">
                                 <input type="radio" name="patternStyle" value="rounded">
                                 <span class="pattern-preview pattern-rounded"></span>
                                 <span class="pattern-label">Rounded</span>
                             </label>
-                            <label class="pattern-option" data-value="diamond">
+                            <label class="pattern-option" data-value="diamond" role="radio" aria-checked="false" tabindex="0">
                                 <input type="radio" name="patternStyle" value="diamond">
                                 <span class="pattern-preview pattern-diamond"></span>
                                 <span class="pattern-label">Diamond</span>
                             </label>
-                            <label class="pattern-option" data-value="dots">
+                            <label class="pattern-option" data-value="dots" role="radio" aria-checked="false" tabindex="0">
                                 <input type="radio" name="patternStyle" value="dots">
                                 <span class="pattern-preview pattern-dots"></span>
                                 <span class="pattern-label">Dots</span>
                             </label>
-                            <label class="pattern-option" data-value="star">
+                            <label class="pattern-option" data-value="star" role="radio" aria-checked="false" tabindex="0">
                                 <input type="radio" name="patternStyle" value="star">
                                 <span class="pattern-preview pattern-star"></span>
                                 <span class="pattern-label">Star</span>
                             </label>
-                            <label class="pattern-option" data-value="smooth">
+                            <label class="pattern-option" data-value="smooth" role="radio" aria-checked="false" tabindex="0">
                                 <input type="radio" name="patternStyle" value="smooth">
                                 <span class="pattern-preview pattern-smooth"></span>
                                 <span class="pattern-label">Smooth</span>
                             </label>
-                            <label class="pattern-option" data-value="horizontal">
+                            <label class="pattern-option" data-value="horizontal" role="radio" aria-checked="false" tabindex="0">
                                 <input type="radio" name="patternStyle" value="horizontal">
                                 <span class="pattern-preview pattern-horizontal"></span>
                                 <span class="pattern-label">Lines</span>
@@ -679,10 +657,6 @@ select {
                             <p>Fill in the contact details and click "Generate Card" to see your business card</p>
                         </div>
                     </div>
-                    <div id="loadingIndicator" class="loading" style="display: none;">
-                        <div class="spinner"></div>
-                        <p>Generating...</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -709,7 +683,6 @@ const FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hel
 const generateBtn = document.getElementById('generateBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const previewContainer = document.getElementById('previewContainer');
-const loadingIndicator = document.getElementById('loadingIndicator');
 const colorTransitionCheckbox = document.getElementById('colorTransition');
 const colorOptions = document.getElementById('colorOptions');
 
@@ -781,13 +754,22 @@ function handleLogoFile(file) {
 }
 
 // ── Pattern grid ─────────────────────────────────────────────
+function selectPattern(option) {
+    document.querySelectorAll('.pattern-option').forEach(o => {
+        o.classList.remove('selected');
+        o.setAttribute('aria-checked', 'false');
+    });
+    option.classList.add('selected');
+    option.setAttribute('aria-checked', 'true');
+    option.querySelector('input[type="radio"]').checked = true;
+    selectedPattern = option.dataset.value;
+    triggerGenerate();
+}
+
 document.querySelectorAll('.pattern-option').forEach(option => {
-    option.addEventListener('click', () => {
-        document.querySelectorAll('.pattern-option').forEach(o => o.classList.remove('selected'));
-        option.classList.add('selected');
-        option.querySelector('input[type="radio"]').checked = true;
-        selectedPattern = option.dataset.value;
-        triggerGenerate();
+    option.addEventListener('click', () => selectPattern(option));
+    option.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); selectPattern(option); }
     });
 });
 
@@ -820,22 +802,29 @@ formInputs.forEach(input => {
 });
 
 // ── vCard ────────────────────────────────────────────────────
+function escapeVCard(s) {
+    return s.replace(/\\/g, '\\\\')
+            .replace(/;/g, '\\;')
+            .replace(/,/g, '\\,')
+            .replace(/\n/g, '\\n');
+}
+
 function generateVCard(c) {
     let v = 'BEGIN:VCARD\nVERSION:3.0\n';
     if (c.name) {
-        const parts = c.name.split(' ', 2);
-        v += parts.length === 2
-            ? `N:${parts[1]};${parts[0]};;;\n`
-            : `N:${parts[0]};;;;\n`;
-        v += `FN:${c.name}\n`;
+        const parts = c.name.trim().split(/\s+/);
+        const last = parts.pop();
+        const first = parts.join(' ');
+        v += `N:${escapeVCard(last)};${escapeVCard(first)};;;\n`;
+        v += `FN:${escapeVCard(c.name)}\n`;
     }
-    if (c.phone) v += `TEL:${c.phone}\n`;
-    if (c.email) v += `EMAIL:${c.email}\n`;
-    if (c.organization) v += `ORG:${c.organization}\n`;
-    if (c.title) v += `TITLE:${c.title}\n`;
+    if (c.phone) v += `TEL;TYPE=CELL:${escapeVCard(c.phone)}\n`;
+    if (c.email) v += `EMAIL:${escapeVCard(c.email)}\n`;
+    if (c.organization) v += `ORG:${escapeVCard(c.organization)}\n`;
+    if (c.title) v += `TITLE:${escapeVCard(c.title)}\n`;
     if (c.url) v += `URL:${c.url}\n`;
     if (c.street || c.town || c.postcode || c.country)
-        v += `ADR:;;${c.street || ''};${c.town || ''};;${c.postcode || ''};${c.country || ''}\n`;
+        v += `ADR:;;${escapeVCard(c.street || '')};${escapeVCard(c.town || '')};;${escapeVCard(c.postcode || '')};${escapeVCard(c.country || '')}\n`;
     v += 'END:VCARD';
     return v;
 }
@@ -935,9 +924,11 @@ function drawRoundRect(ctx, x, y, w, h, r) {
     ctx.fill();
 }
 
-// ── Color transition (diagonal gradient) ─────────────────────
+// ── Color gradient (diagonal) ────────────────────────────────
 function hexToRgb(hex) {
     hex = hex.replace('#', '');
+    if (hex.length === 3)
+        hex = hex.split('').map(c => c + c).join('');
     return [
         parseInt(hex.substring(0, 2), 16),
         parseInt(hex.substring(2, 4), 16),
@@ -945,7 +936,7 @@ function hexToRgb(hex) {
     ];
 }
 
-function applyColorTransition(canvas, darkHex, lightHex) {
+function applyColorGradient(canvas, darkHex, lightHex) {
     const c1 = hexToRgb(darkHex);
     const c2 = hexToRgb(lightHex);
     const ctx = canvas.getContext('2d');
@@ -969,42 +960,18 @@ function applyColorTransition(canvas, darkHex, lightHex) {
 }
 
 // ── Shadow ───────────────────────────────────────────────────
-function addShadow(qrCanvas, bgColor, offset, blur) {
-    offset = offset || 5;
-    blur = blur || 3;
-    const pad = 10;
-    const w = qrCanvas.width + pad * 2 + offset;
-    const h = qrCanvas.height + pad * 2 + offset;
-
-    const grey = document.createElement('canvas');
-    grey.width = qrCanvas.width;
-    grey.height = qrCanvas.height;
-    const gCtx = grey.getContext('2d');
-    gCtx.drawImage(qrCanvas, 0, 0);
-    const gData = gCtx.getImageData(0, 0, grey.width, grey.height);
-    const gd = gData.data;
-    for (let i = 0; i < gd.length; i += 4) {
-        if (gd[i + 3] > 0) {
-            gd[i]     = Math.min(255, Math.floor(gd[i] / 3) + 160);
-            gd[i + 1] = Math.min(255, Math.floor(gd[i + 1] / 3) + 160);
-            gd[i + 2] = Math.min(255, Math.floor(gd[i + 2] / 3) + 160);
-        }
-    }
-    gCtx.putImageData(gData, 0, 0);
-
+function addShadow(qrCanvas, bgColor) {
+    const pad = 16;
     const result = document.createElement('canvas');
-    result.width = w;
-    result.height = h;
+    result.width  = qrCanvas.width  + pad * 2;
+    result.height = qrCanvas.height + pad * 2;
     const ctx = result.getContext('2d');
-
     ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, w, h);
-
-    ctx.save();
-    ctx.filter = `blur(${blur}px)`;
-    ctx.drawImage(grey, pad + offset, pad + offset);
-    ctx.restore();
-
+    ctx.fillRect(0, 0, result.width, result.height);
+    ctx.shadowColor   = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur    = 10;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 4;
     ctx.drawImage(qrCanvas, pad, pad);
     return result;
 }
@@ -1028,9 +995,20 @@ function addLogoToCanvas(canvas, img, sizeRatio) {
 }
 
 // ── Business card render ─────────────────────────────────────
+function fillTextEllipsis(ctx, text, x, y, maxWidth) {
+    if (ctx.measureText(text).width <= maxWidth) {
+        ctx.fillText(text, x, y);
+        return;
+    }
+    while (text.length > 0 && ctx.measureText(text + '\u2026').width > maxWidth)
+        text = text.slice(0, -1);
+    ctx.fillText(text + '\u2026', x, y);
+}
+
 function renderBusinessCard(qrCanvas, contact) {
     const padding = 40;
     const detailsWidth = 380;
+    const maxTextWidth = detailsWidth - 20;
     const qrW = qrCanvas.width;
     const qrH = qrCanvas.height;
     const cardW = padding + qrW + padding + detailsWidth + padding;
@@ -1065,7 +1043,7 @@ function renderBusinessCard(qrCanvas, contact) {
     if (contact.name) {
         ctx.font = `bold 26px ${FONT_FAMILY}`;
         ctx.fillStyle = '#1e1e32';
-        ctx.fillText(contact.name, textX, textY);
+        fillTextEllipsis(ctx, contact.name, textX, textY, maxTextWidth);
         textY += 34;
     }
 
@@ -1075,7 +1053,7 @@ function renderBusinessCard(qrCanvas, contact) {
     if (parts.length) {
         ctx.font = `16px ${FONT_FAMILY}`;
         ctx.fillStyle = '#787896';
-        ctx.fillText(parts.join(' | '), textX, textY);
+        fillTextEllipsis(ctx, parts.join(' | '), textX, textY, maxTextWidth);
         textY += 24;
     }
 
@@ -1084,7 +1062,7 @@ function renderBusinessCard(qrCanvas, contact) {
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(textX, textY);
-    ctx.lineTo(textX + detailsWidth - 20, textY);
+    ctx.lineTo(textX + maxTextWidth, textY);
     ctx.stroke();
     textY += 16;
 
@@ -1096,7 +1074,7 @@ function renderBusinessCard(qrCanvas, contact) {
         textY += 15;
         ctx.font = `15px ${FONT_FAMILY}`;
         ctx.fillStyle = '#323246';
-        ctx.fillText(value, textX, textY);
+        fillTextEllipsis(ctx, value, textX, textY, maxTextWidth);
         textY += 22;
     }
 
@@ -1118,7 +1096,7 @@ function renderBusinessCard(qrCanvas, contact) {
         ctx.font = `15px ${FONT_FAMILY}`;
         ctx.fillStyle = '#323246';
         for (const line of addrParts) {
-            ctx.fillText(line, textX, textY);
+            fillTextEllipsis(ctx, line, textX, textY, maxTextWidth);
             textY += 20;
         }
     }
@@ -1155,11 +1133,19 @@ function generateQRCode() {
     const darkColor = darkColorInput.value;
     const lightColor = lightColorInput.value;
 
-    const qr = createQRMatrix(vcard, errorCorrection);
+    let qr;
+    try {
+        qr = createQRMatrix(vcard, errorCorrection);
+    } catch (e) {
+        showError('Data too long for this error correction level. Try "Low (7%)".');
+        downloadBtn.disabled = true;
+        return;
+    }
+
     let qrCanvas = drawQRWithPattern(qr, selectedPattern);
 
     if (useColor) {
-        applyColorTransition(qrCanvas, darkColor, lightColor);
+        applyColorGradient(qrCanvas, darkColor, lightColor);
     }
 
     const bgColor = useColor ? lightColor : '#ffffff';

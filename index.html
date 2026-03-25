@@ -125,15 +125,26 @@ h3 {
 }
 
 .form-group {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.4rem;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.form-group.checkbox {
+    grid-template-columns: auto 1fr;
+}
+
+.form-group.full-width {
+    grid-template-columns: 1fr;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 0.2rem;
     font-weight: 500;
     color: var(--text);
     font-size: 0.82rem;
+    white-space: nowrap;
 }
 
 .form-group input[type="text"],
@@ -170,84 +181,6 @@ h3 {
     grid-template-columns: 1fr 1.5fr 1fr;
 }
 
-.pattern-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-}
-
-@media (max-width: 500px) {
-    .pattern-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-.pattern-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2rem;
-    padding: 0.35rem;
-    border: 2px solid var(--border);
-    border-radius: 0.4rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: var(--bg);
-}
-
-.pattern-option:hover {
-    border-color: var(--primary-light);
-    background: white;
-}
-
-.pattern-option.selected {
-    border-color: var(--primary);
-    background: white;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
-}
-
-.pattern-option input[type="radio"] {
-    display: none;
-}
-
-.pattern-preview {
-    width: 22px;
-    height: 22px;
-    background: var(--text);
-}
-
-.pattern-standard { border-radius: 2px; }
-.pattern-rounded { border-radius: 50%; }
-.pattern-diamond {
-    border-radius: 2px;
-    transform: rotate(45deg) scale(0.72);
-}
-.pattern-dots {
-    border-radius: 50%;
-    width: 12px;
-    height: 12px;
-}
-.pattern-star {
-    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-}
-.pattern-smooth { border-radius: 6px; }
-.pattern-horizontal {
-    background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 3px,
-        var(--text) 3px,
-        var(--text) 6px
-    );
-    border-radius: 2px;
-}
-
-.pattern-label {
-    font-size: 0.6rem;
-    color: var(--text-light);
-    font-weight: 500;
-}
 
 .form-group.checkbox {
     display: flex;
@@ -488,134 +421,107 @@ select {
     <div class="container">
         <div class="header">
             <h1>QR Contact Generator</h1>
-            <p>Create scannable business card QR codes with style</p>
+            <p>Visitenkarten-QR-Codes direkt im Browser erstellen</p>
         </div>
 
         <div class="content">
             <div class="form-section">
                 <div class="form-card">
-                    <h2>Contact Information</h2>
+                    <h2>Kontaktdaten</h2>
 
                     <div class="form-group">
-                        <label for="name">Full Name *</label>
-                        <input type="text" id="name" placeholder="John Doe" required>
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" placeholder="Max Mustermann" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="title">Job Title</label>
-                            <input type="text" id="title" placeholder="Software Engineer">
+                            <label for="title">Position</label>
+                            <input type="text" id="title" placeholder="Software-Entwickler">
                         </div>
                         <div class="form-group">
-                            <label for="organization">Organization</label>
-                            <input type="text" id="organization" placeholder="Acme Corp">
+                            <label for="organization">Firma</label>
+                            <input type="text" id="organization" placeholder="Musterfirma GmbH">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" placeholder="john@example.com">
+                            <label for="email">E-Mail</label>
+                            <input type="email" id="email" placeholder="max@beispiel.de">
                         </div>
                         <div class="form-group">
-                            <label for="phone">Phone</label>
+                            <label for="phone">Telefon</label>
                             <input type="tel" id="phone" placeholder="+49 123 456 789">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="url">Website</label>
-                        <input type="url" id="url" placeholder="https://example.com">
+                        <input type="url" id="url" placeholder="https://beispiel.de">
                     </div>
 
-                    <h3>Address</h3>
+                    <h3>Adresse</h3>
 
                     <div class="form-group">
-                        <label for="street">Street</label>
+                        <label for="street">Strasse</label>
                         <input type="text" id="street" placeholder="Musterstr. 42">
                     </div>
 
                     <div class="form-row form-row-3">
                         <div class="form-group">
-                            <label for="postcode">Postcode</label>
+                            <label for="postcode">PLZ</label>
                             <input type="text" id="postcode" placeholder="10115">
                         </div>
                         <div class="form-group">
-                            <label for="town">Town / City</label>
+                            <label for="town">Ort</label>
                             <input type="text" id="town" placeholder="Berlin">
                         </div>
                         <div class="form-group">
-                            <label for="country">Country</label>
-                            <input type="text" id="country" placeholder="Germany">
+                            <label for="country">Land</label>
+                            <input type="text" id="country" placeholder="Deutschland">
                         </div>
                     </div>
 
-                    <h2 style="margin-top: 0.8rem;">QR Code Styling</h2>
+                    <h2 style="margin-top: 0.8rem;">QR-Code Stil</h2>
 
-                    <div class="form-group">
-                        <label for="patternStyle">Pattern Style</label>
-                        <div class="pattern-grid" role="radiogroup" aria-label="Pattern Style">
-                            <label class="pattern-option selected" data-value="standard" role="radio" aria-checked="true" tabindex="0">
-                                <input type="radio" name="patternStyle" value="standard" checked>
-                                <span class="pattern-preview pattern-standard"></span>
-                                <span class="pattern-label">Standard</span>
-                            </label>
-                            <label class="pattern-option" data-value="rounded" role="radio" aria-checked="false" tabindex="0">
-                                <input type="radio" name="patternStyle" value="rounded">
-                                <span class="pattern-preview pattern-rounded"></span>
-                                <span class="pattern-label">Rounded</span>
-                            </label>
-                            <label class="pattern-option" data-value="diamond" role="radio" aria-checked="false" tabindex="0">
-                                <input type="radio" name="patternStyle" value="diamond">
-                                <span class="pattern-preview pattern-diamond"></span>
-                                <span class="pattern-label">Diamond</span>
-                            </label>
-                            <label class="pattern-option" data-value="dots" role="radio" aria-checked="false" tabindex="0">
-                                <input type="radio" name="patternStyle" value="dots">
-                                <span class="pattern-preview pattern-dots"></span>
-                                <span class="pattern-label">Dots</span>
-                            </label>
-                            <label class="pattern-option" data-value="star" role="radio" aria-checked="false" tabindex="0">
-                                <input type="radio" name="patternStyle" value="star">
-                                <span class="pattern-preview pattern-star"></span>
-                                <span class="pattern-label">Star</span>
-                            </label>
-                            <label class="pattern-option" data-value="smooth" role="radio" aria-checked="false" tabindex="0">
-                                <input type="radio" name="patternStyle" value="smooth">
-                                <span class="pattern-preview pattern-smooth"></span>
-                                <span class="pattern-label">Smooth</span>
-                            </label>
-                            <label class="pattern-option" data-value="horizontal" role="radio" aria-checked="false" tabindex="0">
-                                <input type="radio" name="patternStyle" value="horizontal">
-                                <span class="pattern-preview pattern-horizontal"></span>
-                                <span class="pattern-label">Lines</span>
-                            </label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patternSelect">Muster</label>
+                            <select id="patternSelect">
+                                <option value="standard" selected>Standard</option>
+                                <option value="rounded">Rund</option>
+                                <option value="diamond">Diamant</option>
+                                <option value="dots">Punkte</option>
+                                <option value="star">Stern</option>
+                                <option value="smooth">Weich</option>
+                                <option value="horizontal">Linien</option>
+                            </select>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="errorCorrection">Error Correction Level</label>
-                        <select id="errorCorrection">
-                            <option value="L">Low (7%)</option>
-                            <option value="M" selected>Medium (15%)</option>
-                            <option value="Q">Quartile (25%)</option>
-                            <option value="H">High (30%)</option>
-                        </select>
+                        <div class="form-group">
+                            <label for="errorCorrection">Fehlerkorrektur</label>
+                            <select id="errorCorrection">
+                                <option value="L">Niedrig (7%)</option>
+                                <option value="M" selected>Mittel (15%)</option>
+                                <option value="Q">Hoch (25%)</option>
+                                <option value="H">Maximum (30%)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group checkbox">
                         <input type="checkbox" id="colorTransition">
-                        <label for="colorTransition">Custom Colors</label>
+                        <label for="colorTransition">Eigene Farben</label>
                     </div>
 
                     <div id="colorOptions" style="display: none;">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="darkColor">Module Color</label>
+                                <label for="darkColor">Modulfarbe</label>
                                 <input type="color" id="darkColor" value="#000000">
                             </div>
                             <div class="form-group">
-                                <label for="lightColor">Background Color</label>
+                                <label for="lightColor">Hintergrund</label>
                                 <input type="color" id="lightColor" value="#FFFFFF">
                             </div>
                         </div>
@@ -623,38 +529,38 @@ select {
 
                     <div class="form-group checkbox">
                         <input type="checkbox" id="shadowEnabled">
-                        <label for="shadowEnabled">Drop Shadow</label>
+                        <label for="shadowEnabled">Schatten</label>
                     </div>
 
                     <div class="form-group">
-                        <label>Center Logo (optional)</label>
+                        <label>Logo (optional)</label>
                         <div class="logo-upload-area" id="logoUploadArea">
                             <input type="file" id="logoInput" accept="image/*" hidden>
                             <div id="logoPlaceholder" class="logo-placeholder">
                                 <span class="logo-icon">+</span>
-                                <span>Click or drag to upload</span>
+                                <span>Klicken oder ziehen</span>
                             </div>
                             <div id="logoPreview" class="logo-preview" style="display:none;">
                                 <img id="logoPreviewImg" alt="Logo">
                                 <button type="button" id="logoRemoveBtn" class="logo-remove">&times;</button>
                             </div>
                         </div>
-                        <p class="hint">Use high error correction (H) for best scan reliability with logos</p>
+                        <p class="hint">Mit Logo: Fehlerkorrektur auf Maximum (30%) setzen</p>
                     </div>
 
                     <div class="button-group">
-                        <button id="generateBtn" class="btn btn-primary">Generate Card</button>
-                        <button id="downloadBtn" class="btn btn-secondary" disabled>Download PNG</button>
+                        <button id="generateBtn" class="btn btn-primary">Karte erstellen</button>
+                        <button id="downloadBtn" class="btn btn-secondary" disabled>PNG herunterladen</button>
                     </div>
                 </div>
             </div>
 
             <div class="preview-section">
                 <div class="preview-card">
-                    <h2>Business Card Preview</h2>
+                    <h2>Vorschau Visitenkarte</h2>
                     <div id="previewContainer" class="preview-container">
                         <div class="preview-placeholder">
-                            <p>Fill in the contact details and click "Generate Card" to see your business card</p>
+                            <p>Kontaktdaten eingeben und auf "Karte erstellen" klicken</p>
                         </div>
                     </div>
                 </div>
@@ -664,7 +570,7 @@ select {
         <div class="footer">
             <a href="https://github.com/HelmutQualtinger/QrGenerarator" target="_blank" rel="noopener">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                Source Code on GitHub
+                Quellcode auf GitHub
             </a>
         </div>
     </div>
@@ -678,6 +584,13 @@ select {
 const BOX_SIZE = 10;
 const BORDER = 2;
 const FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+// Pre-load Säntis background image
+let santisImage = null;
+const _santisImg = new Image();
+_santisImg.crossOrigin = 'anonymous';
+_santisImg.onload = () => { santisImage = _santisImg; triggerGenerate(); };
+_santisImg.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Blick_%C3%BCber_Wien_vom_Prater-Riesenrad_2014.jpg/960px-Blick_%C3%BCber_Wien_vom_Prater-Riesenrad_2014.jpg';
 
 // DOM refs
 const generateBtn = document.getElementById('generateBtn');
@@ -753,24 +666,11 @@ function handleLogoFile(file) {
     reader.readAsDataURL(file);
 }
 
-// ── Pattern grid ─────────────────────────────────────────────
-function selectPattern(option) {
-    document.querySelectorAll('.pattern-option').forEach(o => {
-        o.classList.remove('selected');
-        o.setAttribute('aria-checked', 'false');
-    });
-    option.classList.add('selected');
-    option.setAttribute('aria-checked', 'true');
-    option.querySelector('input[type="radio"]').checked = true;
-    selectedPattern = option.dataset.value;
+// ── Pattern select ───────────────────────────────────────────
+const patternSelect = document.getElementById('patternSelect');
+patternSelect.addEventListener('change', () => {
+    selectedPattern = patternSelect.value;
     triggerGenerate();
-}
-
-document.querySelectorAll('.pattern-option').forEach(option => {
-    option.addEventListener('click', () => selectPattern(option));
-    option.addEventListener('keydown', (e) => {
-        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); selectPattern(option); }
-    });
 });
 
 // ── Color toggle ─────────────────────────────────────────────
@@ -1013,7 +913,7 @@ function renderBusinessCard(qrCanvas, contact) {
     const qrW = qrCanvas.width;
     const qrH = qrCanvas.height;
     const cardW = padding + qrW + padding + detailsWidth + padding;
-    const cardH = Math.max(qrH + padding * 2, 420);
+    const cardH = Math.max(qrH + padding * 2, 560);
 
     const card = document.createElement('canvas');
     card.width = cardW;
@@ -1022,6 +922,25 @@ function renderBusinessCard(qrCanvas, contact) {
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, cardW, cardH);
+
+    if (santisImage) {
+        // Draw Säntis photo covering the right (details) half
+        const bgX = padding + qrW + padding;
+        const bgW = detailsWidth + padding;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(bgX - padding / 2, 0, bgW + padding / 2, cardH);
+        ctx.clip();
+        const scale = Math.max(bgW / santisImage.width, cardH / santisImage.height);
+        const sw = santisImage.width * scale;
+        const sh = santisImage.height * scale;
+        const sx = bgX - padding / 2 + (bgW - sw) / 2;
+        const sy = (cardH - sh) / 2;
+        ctx.drawImage(santisImage, sx, sy, sw, sh);
+        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+        ctx.fillRect(bgX - padding / 2, 0, bgW + padding / 2, cardH);
+        ctx.restore();
+    }
 
     ctx.fillStyle = '#6366f1';
     ctx.fillRect(0, 0, cardW, 5);
@@ -1042,41 +961,41 @@ function renderBusinessCard(qrCanvas, contact) {
     ctx.textBaseline = 'top';
 
     if (contact.name) {
-        ctx.font = `bold 34px ${FONT_FAMILY}`;
+        ctx.font = `bold 46px ${FONT_FAMILY}`;
         ctx.fillStyle = '#1e1e32';
         fillTextEllipsis(ctx, contact.name, textX, textY, maxTextWidth);
-        textY += 44;
+        textY += 58;
     }
 
     const parts = [];
     if (contact.title) parts.push(contact.title);
     if (contact.organization) parts.push(contact.organization);
     if (parts.length) {
-        ctx.font = `20px ${FONT_FAMILY}`;
+        ctx.font = `bold 26px ${FONT_FAMILY}`;
         ctx.fillStyle = '#787896';
         fillTextEllipsis(ctx, parts.join(' | '), textX, textY, maxTextWidth);
-        textY += 30;
+        textY += 38;
     }
 
-    textY += 10;
+    textY += 12;
     ctx.strokeStyle = '#e6e6f0';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(textX, textY);
     ctx.lineTo(textX + maxTextWidth, textY);
     ctx.stroke();
-    textY += 20;
+    textY += 24;
 
     function drawField(label, value) {
         if (!value) return;
-        ctx.font = `14px ${FONT_FAMILY}`;
+        ctx.font = `bold 17px ${FONT_FAMILY}`;
         ctx.fillStyle = '#9696aa';
         ctx.fillText(label.toUpperCase(), textX, textY);
-        textY += 19;
-        ctx.font = `20px ${FONT_FAMILY}`;
+        textY += 23;
+        ctx.font = `bold 26px ${FONT_FAMILY}`;
         ctx.fillStyle = '#323246';
         fillTextEllipsis(ctx, value, textX, textY, maxTextWidth);
-        textY += 28;
+        textY += 36;
     }
 
     drawField('Email', contact.email);
@@ -1090,15 +1009,15 @@ function renderBusinessCard(qrCanvas, contact) {
     ].filter(p => p && p.trim());
 
     if (addrParts.length) {
-        ctx.font = `14px ${FONT_FAMILY}`;
+        ctx.font = `bold 17px ${FONT_FAMILY}`;
         ctx.fillStyle = '#9696aa';
-        ctx.fillText('ADDRESS', textX, textY);
-        textY += 19;
-        ctx.font = `20px ${FONT_FAMILY}`;
+        ctx.fillText('ADRESSE', textX, textY);
+        textY += 23;
+        ctx.font = `bold 26px ${FONT_FAMILY}`;
         ctx.fillStyle = '#323246';
         for (const line of addrParts) {
             fillTextEllipsis(ctx, line, textX, textY, maxTextWidth);
-            textY += 26;
+            textY += 34;
         }
     }
 
@@ -1138,7 +1057,7 @@ function generateQRCode() {
     try {
         qr = createQRMatrix(vcard, errorCorrection);
     } catch (e) {
-        showError('Data too long for this error correction level. Try "Low (7%)".');
+        showError('Daten zu lang für diese Fehlerkorrektur-Stufe. Bitte "Niedrig (7%)" versuchen.');
         downloadBtn.disabled = true;
         return;
     }

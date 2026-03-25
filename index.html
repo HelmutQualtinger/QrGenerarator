@@ -960,7 +960,7 @@ function applyColorGradient(canvas, darkHex, lightHex) {
 }
 
 // ── Shadow ───────────────────────────────────────────────────
-function addShadow(qrCanvas, bgColor) {
+function addShadow(qrCanvas, bgColor, shadowHex) {
     const pad = 16;
     const result = document.createElement('canvas');
     result.width  = qrCanvas.width  + pad * 2;
@@ -968,7 +968,8 @@ function addShadow(qrCanvas, bgColor) {
     const ctx = result.getContext('2d');
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, result.width, result.height);
-    ctx.shadowColor   = 'rgba(255,200,0,0.8)';
+    const rgb = hexToRgb(shadowHex);
+    ctx.shadowColor   = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.8)`;
     ctx.shadowBlur    = 12;
     ctx.shadowOffsetX = 10;
     ctx.shadowOffsetY = 10;
@@ -1152,7 +1153,8 @@ function generateQRCode() {
 
     let resultCanvas;
     if (shadowEnabled) {
-        resultCanvas = addShadow(qrCanvas, bgColor);
+        const shadowColor = useColor ? darkColor : '#000000';
+        resultCanvas = addShadow(qrCanvas, bgColor, shadowColor);
     } else {
         resultCanvas = document.createElement('canvas');
         resultCanvas.width = qrCanvas.width;

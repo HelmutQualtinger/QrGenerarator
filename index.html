@@ -1007,12 +1007,12 @@ function fillTextEllipsis(ctx, text, x, y, maxWidth) {
 
 function renderBusinessCard(qrCanvas, contact) {
     const padding = 40;
-    const detailsWidth = 380;
+    const detailsWidth = 440;
     const maxTextWidth = detailsWidth - 20;
     const qrW = qrCanvas.width;
     const qrH = qrCanvas.height;
     const cardW = padding + qrW + padding + detailsWidth + padding;
-    const cardH = Math.max(qrH + padding * 2, 340);
+    const cardH = Math.max(qrH + padding * 2, 420);
 
     const card = document.createElement('canvas');
     card.width = cardW;
@@ -1041,41 +1041,41 @@ function renderBusinessCard(qrCanvas, contact) {
     ctx.textBaseline = 'top';
 
     if (contact.name) {
-        ctx.font = `bold 26px ${FONT_FAMILY}`;
+        ctx.font = `bold 34px ${FONT_FAMILY}`;
         ctx.fillStyle = '#1e1e32';
         fillTextEllipsis(ctx, contact.name, textX, textY, maxTextWidth);
-        textY += 34;
+        textY += 44;
     }
 
     const parts = [];
     if (contact.title) parts.push(contact.title);
     if (contact.organization) parts.push(contact.organization);
     if (parts.length) {
-        ctx.font = `16px ${FONT_FAMILY}`;
+        ctx.font = `20px ${FONT_FAMILY}`;
         ctx.fillStyle = '#787896';
         fillTextEllipsis(ctx, parts.join(' | '), textX, textY, maxTextWidth);
-        textY += 24;
+        textY += 30;
     }
 
-    textY += 8;
+    textY += 10;
     ctx.strokeStyle = '#e6e6f0';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(textX, textY);
     ctx.lineTo(textX + maxTextWidth, textY);
     ctx.stroke();
-    textY += 16;
+    textY += 20;
 
     function drawField(label, value) {
         if (!value) return;
-        ctx.font = `12px ${FONT_FAMILY}`;
+        ctx.font = `14px ${FONT_FAMILY}`;
         ctx.fillStyle = '#9696aa';
         ctx.fillText(label.toUpperCase(), textX, textY);
-        textY += 15;
-        ctx.font = `15px ${FONT_FAMILY}`;
+        textY += 19;
+        ctx.font = `20px ${FONT_FAMILY}`;
         ctx.fillStyle = '#323246';
         fillTextEllipsis(ctx, value, textX, textY, maxTextWidth);
-        textY += 22;
+        textY += 28;
     }
 
     drawField('Email', contact.email);
@@ -1089,15 +1089,15 @@ function renderBusinessCard(qrCanvas, contact) {
     ].filter(p => p && p.trim());
 
     if (addrParts.length) {
-        ctx.font = `12px ${FONT_FAMILY}`;
+        ctx.font = `14px ${FONT_FAMILY}`;
         ctx.fillStyle = '#9696aa';
         ctx.fillText('ADDRESS', textX, textY);
-        textY += 15;
-        ctx.font = `15px ${FONT_FAMILY}`;
+        textY += 19;
+        ctx.font = `20px ${FONT_FAMILY}`;
         ctx.fillStyle = '#323246';
         for (const line of addrParts) {
             fillTextEllipsis(ctx, line, textX, textY, maxTextWidth);
-            textY += 20;
+            textY += 26;
         }
     }
 
